@@ -1,7 +1,8 @@
 # XPay聚合支付系统接口文档
 
 ## 支付流程
-支付交易场景为商户需要在手机应用( APP )，可以选择 XPay SDK 中的支付 Charge 功能， XPay 支付 Charge 功能需要同时使用客户端 SDK 和服务端 SDK（目前只开放接口）。
+### 非WAP支付方式支付
+支付交易场景为商户需要在手机应用( APP )，可以选择 XPay SDK 中的支付 Charge 功能（非wap支付方式）， XPay 支付 Charge 功能需要同时使用客户端 SDK 和服务端 SDK（目前只开放接口）。
 
 1. 用户在客户端选择商品并提交订单，客户端需要向你的服务端传递支付要素。注意：XPay SDK 不涉及你的客户端和你的服务端之间的数据交互，此处请你自定义通信方式。
 2. 服务端接收到客户端请求参数，并调用 Server-SDK(目前接口)封装的创建支付 Charge 的方法请求 XPay 。
@@ -10,6 +11,18 @@
 5. 客户端拿到支付凭据 Charge 对象后，需要调用 Client-SDK 封装的方法调起支付控件，用户完成支付。
 6. 第三方支付渠道会直接在客户端返回支付结果，此处不要使用客户端的成功结果更新订单的最终状态。
 7. 在 XPay 管理平台配置 Webhooks 的 charge.succeeded 事件。支付完成时，XPay 会主动以 POST 方式向你配置在管理平台上的 Webhooks 通知地址发送支付结果，建议订单状态的更新对比客户端的渠道同步回调信息和服务端的 XPay Webhooks 通知来确定是否修改。
+8. 同时，建议在处理逻辑中添加主动查询机制：如果在可接受的时间范围内没有收到 Webhooks 通知，你也可以调用 Server-SDK 封装的查询方法，主动向 XPay 发起请求来获得订单状态，该查询结果可以作为交易结果。
+
+### WAP支付方式
+支付交易场景为商户需要在手机应用( APP )，可以选择 XPay SDK 中的支付 Charge 功能（WAP支付方式）， XPay 支付 Charge 功能需要同时使用客户端 SDK 和服务端 SDK（目前只开放接口）。
+
+1. 用户在客户端选择商品并提交订单，客户端需要向你的服务端传递支付要素。注意：XPay SDK 不涉及你的客户端和你的服务端之间的数据交互，此处请你自定义通信方式。
+2. 服务端接收到客户端请求参数，并调用 Server-SDK(目前接口)封装的创建支付 Charge 的方法请求 XPay 进行预下单。
+3. XPay 响应你的服务端请求，返回 Charge (预支付凭据)给你的服务端。
+4. 你的服务端响应你的客户端请求，需要将该 Charge 对象完整的返回给你的客户端，注意：这里的 Charge 返回类型必须是 JSON 格式。
+5. 客户端拿到支付凭据 Charge 对象后，需要调用 Client-SDK 封装的方法调起H5选择订单支付方式。
+6. 当选择对应支付方式后，H5会向 XPay 服务端发起该订单流水号的支付请求，并返回对应支付方式的支付凭证给H5。H5调起第三方支付应用完成支付流程。
+7. 第三方支付渠道会异步通知 XPay 服务端，XPay 通知H5更新支付结果并异步通知商家服务端。
 8. 同时，建议在处理逻辑中添加主动查询机制：如果在可接受的时间范围内没有收到 Webhooks 通知，你也可以调用 Server-SDK 封装的查询方法，主动向 XPay 发起请求来获得订单状态，该查询结果可以作为交易结果。
 
 ## 接口文档
@@ -93,6 +106,16 @@ app key: app_ZtoqRMGVwmV2EPVYg3vMXtHN
 | failure_msg | string | 订单的错误消息的描述。|
 | credential | object | 支付凭证，用于客户端发起支付。|
 | description | string | 订单附加说明，最多 255 个 Unicode 字符。|
+
+**目前支持的channel：**
+
+| 支付渠道字符串 | 描述 |
+| ------ | ---- |
+| wx | 微信App支付 |
+| alipay | 支付宝App支付 |
+| dian_zhi_wx_scan | 点指扫码支付 |
+| dian_zhi_quick | 点指快捷支付 |
+| wap_zhimou | 智眸WAP支付 |
 
 #### 创建 Charge 对象
 
@@ -291,4 +314,72 @@ Event 事件类型
     "pending_webhooks": 0,
     "request": "iar_qH4y1KbTy5eLGm1uHSTS00s"
 }
+```
+
+## Webhooks使用指南
+
+为了便于客户系统或者第三方系统处理客户的交易信息，XPay 系统支持 Webhooks 功能，可以按照客户要求把特定的事件结果推送到指定的地址以便于客户做后续处理。目前支持的事件包括支付结果、和退款结果。
+
+### 配置 Webhooks
+在商家后台菜单栏选择 webhooks 后，设置接收 Webhooks 事件的地址和事件类型。
+
+### 接收 Webhooks 通知
+
+1. Webhooks 是 XPay 和你服务器间的交互，不像页面跳转同步通知可以在页面上显示出来，这种交互方式是不可见的。
+2. Webhooks 通知是以 POST 形式发送的 JSON ，放在请求的 body 里，内容是 Event 对象。
+3. 你需要监听并接收 Webhooks 通知，接收到 Webhooks 后需要返回服务器状态码 ``2xx ``表示接收成功，否则请返回状态码 ``500``。
+4. 若你的服务器未正确返回 2xx，XPay 服务器会在 25 小时内向你的服务器不断重发通知，最多 10 次。Webhooks 首次是即时推送，重试通知时间间隔为 5s、10s、2min、5min、10min、30min、1h、2h、6h、15h，直到你正确回复状态 2xx 或者超过最大重发次数，XPay 将不再发送。
+
+### 验证 Webhooks 签名（可选）
+
+为了进一步确保安全性， XPay Webhooks 提供了签名验证。你需要验证该通知是来自于 XPay 后再更新你的订单状态
+
+#### 签名简介
+
+XPay 的 Webhooks 通知包含了签名字段，可以使用该签名验证 Webhooks 通知的合法性。签名放置在 header 的自定义字段 XPay-Signature 中，签名用 RSA 私钥对 Webhooks 通知使用 RSA-SHA256 算法进行签名，以 base64 格式输出。
+
+#### 验证签名
+
+XPay 在管理平台中提供了 RSA 公钥，供验证签名，该公钥具体获取路径：点击管理平台右上角公司名称->企业设置-> XPay 公钥。验证签名需要以下几步：
+
+从 header 取出签名字段并对其进行 base64 解码。
+获取 Webhooks 请求的原始数据。
+将获取到的 Webhooks 通知、 XPay 管理平台提供的 RSA 公钥、和 base64 解码后的签名三者一同放入 RSA 的签名函数中进行非对称的签名运算，来判断签名是否验证通过。可参考以下java代码：
+
+```
+/**
+     * 获得公钥
+     * @return
+     * @throws Exception
+     */
+    public static PublicKey getPubKey() throws Exception {
+        String pubKeyString = getStringFromFile(pubKeyPath);
+        pubKeyString = pubKeyString.replaceAll("(-+BEGIN PUBLIC KEY-+\\r?\\n|-+END PUBLIC KEY-+\\r?\\n?)", "");
+        byte[] keyBytes = Base64.decodeBase64(pubKeyString);
+
+        // generate public key
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey publicKey = keyFactory.generatePublic(spec);
+        return publicKey;
+    }
+
+    /**
+     * 验证签名
+     * @param dataString
+     * @param signatureString
+     * @param publicKey
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     */
+    public static boolean verifyData(String dataString, String signatureString, PublicKey publicKey)
+            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, UnsupportedEncodingException {
+        byte[] signatureBytes = Base64.decodeBase64(signatureString);
+        Signature signature = Signature.getInstance("SHA256withRSA");
+        signature.initVerify(publicKey);
+        signature.update(dataString.getBytes("UTF-8"));
+        return signature.verify(signatureBytes);
+    }
 ```
