@@ -47,10 +47,6 @@ XPay API 使用 HTTP Basic Auth 进行认证。 将 API Key 作为 basic auth �
 
 ### 测试key
 
-secret key： sk_live_5GZBgiXgZ71bru5fjqfSbDGS
-
-app key: app_ZtoqRMGVwmV2EPVYg3vMXtHN
-
 ### 服务器错误码
 
 * **200** OK - [GET]：服务器成功返回用户请求的数据，该操作是幂等的（Idempotent）。
