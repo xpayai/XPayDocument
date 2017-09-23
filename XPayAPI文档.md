@@ -89,7 +89,7 @@ XPay API 使用 HTTP Basic Auth 进行认证。 将 API Key 作为 basic auth �
 | livemode | boolean | 是否处于  live 模式。|
 | paid | boolean | 是否已付款。|
 | refunded | boolean | 是否存在退款信息，无论退款是否成功。|
-| app | string | 支付使用的  app 对象的  id|
+| app | object | 支付使用的  app 对象，必须填写对象的id 例如：{"id":"xxxxx"}|
 | channel | string | 支付使用的第三方支付渠道（微信：wx、支付宝：alipay）|
 | order_no | string | 商户订单号，适配每个渠道对此参数的要求，必须在商户系统内唯一。( alipay : 1-64 位，  wx : 2-32 位， bfb : 1-20 位， upacp : 8-40 位， yeepay_wap :1-50 位， jdpay_wap :1-30 位， qpay :1-30 位， cmb_wallet :10 位纯数字字符串。注：除  cmb_wallet 外的其他渠道推荐使用 8-20 位，要求数字或字母，不允许特殊字符)。|
 | client_ip | string | 发起支付请求客户端的 IP 地址，格式为 IPv4 整型，如 127.0.0.1。|
