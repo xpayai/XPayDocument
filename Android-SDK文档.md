@@ -1,6 +1,6 @@
 # XPay-android SDK
 
-项目地址：<https://github.com/chenxueqiang/xpay-android>
+项目地址：<https://github.com/XPay-SDK/XPay-AndroidSDK>
 
 
 ### 配置工程
