@@ -1,31 +1,19 @@
 ## XPaySDK
 
 ## 简介
-项目地址：[https://github.com/Casum/XPaySDK](https://github.com/Casum/XPaySDK)
+项目地址：[https://github.com/Casum/XPaySDK](https://github.com/XPay-SDK/XPay-iOSSDK)
 
 lib 文件夹下是 iOS SDK 文件，
 example 文件夹里面是一个简单的接入示例，该示例仅供参考。
 
-当前版本，不需要微信的 SDK，可以正常调用微信支付
+当前版本，如需接入微信、支付宝支付，需要额外联系工作对接人员获取相关的SDK
 
 ## 版本要求
 iOS SDK 要求 iOS 7.0 及以上版本
 
 ## 接入方法
 
-**安装**
-
-**使用CocoaPods**
-
-1. 在 Podfile 添加 `pod 'XPaySDK'`默认会包含支付宝、微信和点指扫码、点指快捷支付
-
-2. 运行 `pod install`
-
-3. 从现在开始使用 `.xcworkspace` 打开项目，而不是 `.xcodeproj`
-
-4. 添加 URL Schemes：在 Xcode 中，选择你的工程设置项，选中 "TARGETS" 一栏，在 "Info" 标签栏的 "URL Types" 添加 "URL Schemes"，如果使用微信，填入所注册的微信应用程序 id，如果不使用微信，则自定义，允许英文字母和数字，首字母必须是英文字母，建议起名稍复杂一些，尽量避免与其他程序冲突。
-
-5. XPaySDK 打开 Debug 模式，打印出 log，方便调试。关闭方法：`[XPaySDK setDebugMode:NO];`
+**集成**
 
 **手动导入**
 
@@ -33,7 +21,7 @@ iOS SDK 要求 iOS 7.0 及以上版本
 
 	下载 SDK, 里面包含了 lib 文件夹和 example 文件夹。lib 文件夹里面是 SDK 的文件。
 
-2. 依赖 Frameworks：
+2. 如需添加微信、支付宝sdk需添加以下依赖 Frameworks：
 
 	```
 	CFNetwork.framework
