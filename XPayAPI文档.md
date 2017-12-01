@@ -111,8 +111,8 @@ XPay API 使用 HTTP Basic Auth 进行认证。 将 API Key 作为 basic auth �
 | ------ | ---- |
 | wx | 微信App支付 |
 | alipay | 支付宝App支付 |
-| dian_zhi_wx_scan | 点指扫码支付 |
-| dian_zhi_quick | 点指快捷支付 |
+| huanxun | pc银联支付 |
+| huanxun_mobile | 移动银联支付 |
 | wap_zhimou | 智眸WAP支付 |
 
 #### 创建 Charge 对象
