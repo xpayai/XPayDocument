@@ -134,6 +134,7 @@ XPay API 使用 HTTP Basic Auth 进行认证。 将 API Key 作为 basic auth �
 | body | string | 商品描述信息，该参数最长为 128 个 Unicode 字符， yeepay_wap 对于该参数长度限制为 100 个 Unicode 字符。| 是 |
 | extra | object | 特定渠道发起交易时需要的额外参数，以及部分渠道支付成功返回的额外参数，详细参考 支付渠道 extra 参数说明 。| 否 |
 | time_expire | timestamp | 订单失效时的 Unix 时间戳。时间范围在订单创建后的 1 分钟到 15 天，默认为 1 天，创建时间以 XPay 服务器时间为准。 微信对该参数的有效值限制为 2 小时内；银联对该参数的有效值限制为 1 小时内。| 否 |
+| metadata | object | 用户指定的 metadata 参数。你可以使用键值对的形式来构建自己的 metadata | 否 |
 | description | string | 订单附加说明，最多 255 个 Unicode 字符。| 否 |
 
 **请求示例:**
@@ -184,6 +185,7 @@ XPay::Charge.create(
             "sign":"D0ECC58B504FA7F8CF7E95114DD56E5C"
         }
     },
+    “metadata”:null,
     "description":null
 }
 ```
