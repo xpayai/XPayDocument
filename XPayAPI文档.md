@@ -1,4 +1,3 @@
-[toc]
 
 # XPay聚合支付系统接口文档
 
@@ -96,7 +95,7 @@ XPay API 使用 HTTP Basic Auth 进行认证。 将 API Key 作为 basic auth �
 | amount | int | 订单总金额（必须大于0），单位为对应币种的最小货币单位，人民币为分。如订单总金额为 1 元， amount 为 100，么么贷商户请查看申请的借贷金额范围。|
 | subject | string | 商品标题，该参数最长为 32 个 Unicode 字符，银联全渠道（ upacp / upacp_wap ）限制在 32 个字节。|
 | body | string | 商品描述信息，该参数最长为 128 个 Unicode 字符， yeepay_wap 对于该参数长度限制为 100 个 Unicode 字符。|
-| extra | object | 特定渠道发起交易时需要的额外参数，以及部分渠道支付成功返回的额外参数，详细参考 支付渠道 extra 参数说明 。|
+| extra | object | 特定渠道发起交易时需要的额外参数，以及部分渠道支付成功返回的额外参数，详细参考 [支付渠道 extra 参数说明](https://github.com/xpayai/XPayDocument/blob/master/%E6%94%AF%E4%BB%98%E6%B8%A0%E9%81%93%20extra%20%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E.md) 。|
 | time_paid | timestamp | 订单支付完成时的 Unix 时间戳。（银联支付成功时间为接收异步通知的时间）|
 | time_expire | timestamp | 订单失效时的 Unix 时间戳。时间范围在订单创建后的 1 分钟到 15 天，默认为 1 天，创建时间以 XPay 服务器时间为准。 微信对该参数的有效值限制为 2 小时内；银联对该参数的有效值限制为 1 小时内。|
 | transaction_no | string | 支付渠道返回的交易流水号。|
