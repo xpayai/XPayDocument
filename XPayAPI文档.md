@@ -253,10 +253,12 @@ XPay::Charge.create(
 
 **请求参数**
 
-| 属性名 | 类型 | 描述 |
-| ------ | ---- | ---- |
-| CHARGE_ID | string | 支付 charge 对象的 id ，该参数仅需要填写在请求地址内。|
-| refund_no | string | 商户退款订单号，必须唯一|
+| 属性名 | 类型 | 描述 | 必填 |
+| ------ | ---- | ---- | ---- |
+| CHARGE_ID | string | 支付 charge 对象的 id ，该参数仅需要填写在请求地址内。| 是 |
+| refund_no | string | 商户退款订单号，必须唯一| 是 |
+| metadata |  object | 用户指定的 metadata 参数。你可以使用键值对的形式来构建自己的 metadata | 否 |
+| description | string | 退款详情，最多 255 个 Unicode 字符。 |  否 |
 
 **请求返回：**
 ```
@@ -287,14 +289,10 @@ XPay::Charge.create(
 
 **请求参数**
 
-| 属性名 | 类型 | 描述 |
-| ------ | ---- | ---- |
-| CHARGE_ID | string | 退款的 charge 对象 id ，该参数仅需要填写在请求地址内。|
-| REFUND_ID | string | 查询的 refund 对象 id ，该参数仅需要填写在请求地址内。|
-
-**返回**
-返回一个已存在的 refund 对象或者一个错误。
-
+| 属性名 | 类型 | 描述 | 必填 |
+| ------ | ---- | ---- | ---- |
+| CHARGE_ID | string | 退款的 charge 对象 id ，该参数仅需要填写在请求地址内。| 是 |
+| REFUND_ID | string | 查询的 refund 对象 id ，该参数仅需要填写在请求地址内。| 否 |
 
 **请求返回：**
 ```
