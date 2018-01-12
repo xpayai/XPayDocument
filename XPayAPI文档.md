@@ -1,4 +1,3 @@
-
 # XPay聚合支付系统接口文档
 
 ## 支付流程
@@ -75,6 +74,8 @@ XPay API 使用 HTTP Basic Auth 进行认证。 将 API Key 作为 basic auth �
 ```
 
 ### 交易
+
+### charge 支付
 
 你可以创建一个 `charge` 对象向用户收款。 `charge` 是一个支付凭据对象，所有和支付相关的要素信息都存储在这个对象中，你的服务端可以通过发起支付请求来创建一个新的 `charge` 对象，也可以随时查询一个或者多个 `charge` 对象的状态。每个 `charge` 对象都拥有一个标识 `id`，该 `id` 在 XPay 系统内唯一。
 
@@ -187,7 +188,7 @@ XPay::Charge.create(
             "sign":"D0ECC58B504FA7F8CF7E95114DD56E5C"
         }
     },
-    “metadata”:null,
+    “metadata”:null,
     "description":null
 }
 ```
@@ -241,6 +242,81 @@ XPay::Charge.create(
     "description":null
 }
 ```
+
+### 退款
+
+#### 创建 Refund 对象
+
+通过发起一次退款请求创建一个新的 refund 对象，只能对已经发生交易并且没有全额退款的 charge 对象发起全额退款。退款成功后会发送 Webhooks 通知。
+
+**POST**  /charges/{CHARGE_ID}/refunds
+
+**请求参数**
+
+| 属性名 | 类型 | 描述 |
+| ------ | ---- | ---- |
+| CHARGE_ID | string | 支付 charge 对象的 id ，该参数仅需要填写在请求地址内。|
+| refund_no | string | 商户退款订单号，必须唯一|
+
+**请求返回：**
+```
+{
+    "id": "re_nzHsyZ4SRbCLtGUMfcSxkjaK",
+    "object": "refund",
+    "created": 1515746914,
+    "environment": "staging",
+    "refunded": "true",
+    "refund_no": "20180112161940R",
+    "amount": 65877,
+    "currency": "cny",
+    "extra": {},
+    "time_refunded": 1515746916,
+    "transaction_no": null,
+    "failure_code": null,
+    "failure_msg": null,
+    "metadata": {},
+    "description": null
+}           
+```
+
+####查询Refund对象
+
+可以通过charge 对象的查询接口查询某一个charge 对象的退款列表，也可以通过refund 对象的 id 查询一个已创建的refund 对象。可以在 Webhooks 通知之前，通过查询接口确认退款状态。
+
+**GET** charges/{CHARGE_ID}/refunds/{REFUND_ID}
+
+**请求参数**
+
+| 属性名 | 类型 | 描述 |
+| ------ | ---- | ---- |
+| CHARGE_ID | string | 退款的 charge 对象 id ，该参数仅需要填写在请求地址内。|
+| REFUND_ID | string | 查询的 refund 对象 id ，该参数仅需要填写在请求地址内。|
+
+**返回**
+返回一个已存在的 refund 对象或者一个错误。
+
+
+**请求返回：**
+```
+{
+    "id": "re_nzHsyZ4SRbCLtGUMfcSxkjaK",
+    "object": "refund",
+    "created": 1515746914,
+    "environment": "staging",
+    "refunded": "true",
+    "refund_no": "20180112161940R",
+    "amount": 65877,
+    "currency": "cny",
+    "extra": {},
+    "time_refunded": 1515746916,
+    "transaction_no": null,
+    "failure_code": null,
+    "failure_msg": null,
+    "metadata": {},
+    "description": null
+}
+```
+
 
 ### Webhooks回调
 
